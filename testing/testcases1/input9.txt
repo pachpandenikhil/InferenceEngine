@@ -1,0 +1,11 @@
+2
+~Kills(Curiosity, Tuna)
+~Kills(Jack, Tuna)
+7
+Dog(Deb)
+Owns(Jack, Deb)
+((Dog(y) & Owns(x, y)) => Animallover(x))
+((Animallover(x) & Animal(y)) => (~Kills(x,y)))
+(Kills(Jack, Tuna) | Kills(Curiosity, Tuna))
+Cat(Tuna)
+(Cat(x) => Animal(x))
