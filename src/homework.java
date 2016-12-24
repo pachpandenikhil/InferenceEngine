@@ -20,6 +20,12 @@ import java.util.Stack;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class representing arithmetic and logical operators and their utility functions.
+ * 
+ * @author pachpandenikhil
+ *
+ */
 class Operator {
 	public static final char PLUS 							= '+';
 	public static final char MINUS 							= '-';
@@ -33,24 +39,29 @@ class Operator {
 	public static final char RIGHT_PARENTHESIS 				= ')';
 	public static final char PREDICATE_LEFT_PARENTHESIS 	= '[';
 	public static final char PREDICATE_RIGHT_PARENTHESIS 	= ']';
-
 	public static final String IMPLIES 						= "=>";
-
-	public static boolean isOperator(char ch) {
+	
+	/**
+	 * Returns true if the input is an operator.
+	 * @param input the char to be tested.
+	 * @return true if and only if the char is an operator.
+	 */
+	
+	public static boolean isOperator(char input) {
 
 		boolean retVal = false;
-		switch (ch) {
+		switch (input) {
 
-		case Operator.PLUS		: 
-		case Operator.MINUS		:
-		case Operator.MULTIPLY	: 
-		case Operator.DIVIDE	:
-		case Operator.NEGATE	:
-		case Operator.AND		:
-		case Operator.OR		:
-		case Operator.EQUALS	:
-		case Operator.LEFT_PARENTHESIS: 
-		case Operator.RIGHT_PARENTHESIS: 
+		case Operator.PLUS				: 
+		case Operator.MINUS				:
+		case Operator.MULTIPLY			: 
+		case Operator.DIVIDE			:
+		case Operator.NEGATE			:
+		case Operator.AND				:
+		case Operator.OR				:
+		case Operator.EQUALS			:
+		case Operator.LEFT_PARENTHESIS	: 
+		case Operator.RIGHT_PARENTHESIS	: 
 			retVal = true; 
 			break;
 
@@ -64,6 +75,11 @@ class Operator {
 
 }
 
+/**
+ * Class for infix to postfix conversion.
+ * @author pachpandenikhil
+ *
+ */
 class InfixToPostfix {
 
 	private Stack<Character> stack;
@@ -73,7 +89,12 @@ class InfixToPostfix {
 		stack = new Stack<>();
 		postfix = "";
 	}
-
+	
+	/**
+	 * Converts the infix expression to postfix.
+	 * @param infix the infix expression in string form.
+	 * @return postfix expression in string form.
+	 */
 	public String convertToPostfix(String infix) {
 		for (int j = 0; j < infix.length(); j++) {
 			char ch = infix.charAt(j);
@@ -98,7 +119,7 @@ class InfixToPostfix {
 				break;
 
 			case Operator.RIGHT_PARENTHESIS: 
-				gotParenthesis(ch); 
+				gotParenthesis(); 
 				break;
 
 			default: 
@@ -111,7 +132,12 @@ class InfixToPostfix {
 		}
 		return postfix; 
 	}
-
+	
+	/**
+	 * Called when an operator is encountered during postfix conversion.
+	 * @param opThis the current operator
+	 * @param prec1 the operator precedence
+	 */
 	private void gotOperator(char opThis, int prec1) {
 		while (!stack.isEmpty()) {
 			char opTop = stack.pop();
@@ -136,7 +162,11 @@ class InfixToPostfix {
 		stack.push(opThis);
 	}
 
-	private void gotParenthesis(char ch){ 
+	/**
+	 * Called when a parenthesis is encountered during postfix expression conversion.
+	 *  
+	 */
+	private void gotParenthesis(){ 
 		while (!stack.isEmpty()) {
 			char chx = stack.pop();
 			if (chx == Operator.LEFT_PARENTHESIS) 
@@ -147,32 +177,59 @@ class InfixToPostfix {
 	}
 }
 
+/**
+ * Class representing a node in the expression tree.
+ * @author pachpandenikhil
+ *
+ */
 class Node {
 
-	String value;
-	Node left, right;
+	protected String value;
+	protected Node left, right;
 
-	Node(String item) {
+	public Node(String item) {
 		value = item;
 		left = right = null;
 	}
-
+	
+	/**
+	 * Return true if the node is an OR operator.
+	 * @return true if and only if the node is an OR operator.
+	 */
 	public boolean isOrOperator() {
 		return isOperatorNode(this, Operator.OR);
 	}
-
+	
+	/**
+	 * Return true if the node is an AND operator.
+	 * @return true if and only if the node is an AND operator.
+	 */
 	public boolean isAndOperator() {
 		return isOperatorNode(this, Operator.AND);
 	}
-
+	
+	/**
+	 * Return true if the node is a negation operator.
+	 * @return true if and only if the node is a negation operator.
+	 */
 	public boolean isNegateOperator() {
 		return isOperatorNode(this, Operator.NEGATE);
 	}
-
+	
+	/**
+	 * Return true if the node is an implication operator.
+	 * @return true if and only if the node is an implication operator.
+	 */
 	public boolean isImpliesOperator() {
 		return isOperatorNode(this, Operator.EQUALS);
 	}
-
+	
+	/**
+	 * Returns true if the node is the operator specified by the <CODE>operator</CODE> argument.
+	 * @param node the node to be verified.
+	 * @param operator the operator against which the node is to be verified.
+	 * @return true if and only if the node is the operator specified by the <CODE>operator</CODE> argument.
+	 */
 	public static boolean isOperatorNode(Node node, char operator) {
 		boolean retVal = false;
 		if(node != null) {
@@ -183,7 +240,11 @@ class Node {
 		}
 		return retVal;
 	}
-
+	
+	/**
+	 * Returns true if the node is a negated predicate.<BR><B>For eg.</B> ~Run[x].
+	 * @return true if and only if the node is a negated predicate.
+	 */
 	public boolean isNegatedPredicate() {
 		boolean retVal = false;
 		if(this.value != null) {
@@ -195,15 +256,29 @@ class Node {
 	}
 }
 
+/**
+ * Class representing the postfix expression tree.
+ * @author pachpandenikhil
+ *
+ */
 class ExpressionTree {
 	private String inorderRepresentation;
-
+	
+	/**
+	 * Returns the inorder traversal of the tree.
+	 * @param node the root node.
+	 * @return the inorder traversal.
+	 */
 	public String getInorderRepresentation(Node node) {
 		inorderRepresentation = "";
 		inorder(node);
 		return inorderRepresentation;
 	}
-
+	
+	/**
+	 * Performs inorder traversal of the tree rooted at <CODE>node</CODE>.
+	 * @param node the root node.
+	 */
 	private void inorder(Node node) {
 		if (node != null) {
 			inorder(node.left);
@@ -212,6 +287,11 @@ class ExpressionTree {
 		}
 	}
 
+	/**
+	 * Constructs the expression tree from postfix expression.
+	 * @param postfix the char array representing the postfix expression.
+	 * @return the root node of the expression tree.
+	 */
 	public Node constructTree(char postfix[]) {
 
 		Stack<Node> stack = new Stack<>();
@@ -259,6 +339,11 @@ class ExpressionTree {
 	}
 }
 
+/**
+ * Class representing the inference engine's knowledge base.
+ * @author pachpandenikhil
+ *
+ */
 class KnowledgeBase {
 
 	private Map<String, Map<String, List<List<String>>>> KB;
@@ -272,19 +357,25 @@ class KnowledgeBase {
 		KB = new HashMap<String, Map<String,List<List<String>>>>();
 		variableSequence = 0;
 	}
-
-	private void addFact(String predicate, String sentenceKey, List<String> predicates) {
-		if((predicate != null) && (sentenceKey != null) && (predicates != null) ) {
+	
+	/**
+	 * Adds a fact to the knowledge base.
+	 * @param predicate the predicate against which the fact is to be added.
+	 * @param sentenceKey the key of the predicate against which the fact is to be added.
+	 * @param fact the fact to be added.
+	 */
+	private void addFact(String predicate, String sentenceKey, List<String> fact) {
+		if((predicate != null) && (sentenceKey != null) && (fact != null) ) {
 			if(KB.containsKey(predicate)) {
 				Map<String, List<List<String>>> sentenceMap = KB.get(predicate);
 				List<List<String>> sentenceList = sentenceMap.get(sentenceKey);
-				List<String> sentence = new ArrayList<>(predicates);
+				List<String> sentence = new ArrayList<>(fact);
 				sentenceList.add(sentence);
 				sentenceMap.put(sentenceKey, sentenceList);
 				KB.put(predicate, sentenceMap);
 			}
 			else {							
-				List<String> sentence = new ArrayList<>(predicates);
+				List<String> sentence = new ArrayList<>(fact);
 				List<List<String>> sentenceList = new ArrayList<>();
 				sentenceList.add(sentence);
 				Map<String, List<List<String>>> sentenceMap = new HashMap<>();
@@ -301,8 +392,12 @@ class KnowledgeBase {
 			}
 		}
 	}
-
-
+	
+	/**
+	 * Stores a fact in the knowledge base.<BR>Separates the conjuncts and standardizes the variables before adding the fact. 
+	 * @param fact the fact to be stored.
+	 * @return true if and only if the fact was successfully added to the knowledge base.
+	 */
 	public boolean store(String fact) {
 		boolean retVal = false;
 		if(fact != null) {
@@ -333,6 +428,11 @@ class KnowledgeBase {
 		return retVal;
 	}
 	
+	/**
+	 * Returns the predicate name(i.e without the variables) of the predicate.<BR>In case of negated predicates, the negation operator is ignored.
+	 * @param predicate the predicate whose name is required.
+	 * @return the predicate name.
+	 */
 	public String getPredicateName(String predicate) {
 		String name = "";
 		if(predicate != null) {
@@ -344,11 +444,21 @@ class KnowledgeBase {
 		}
 		return name;
 	}
-
-	private String sequenceGenerator(int i) {
-        return i < 0 ? "" : sequenceGenerator((i / 26) - 1) + (char)(97 + i % 26);
+	
+	/**
+	 * Returns the next alphabet in the sequence starting from 'a'.
+	 * @param index the index of the next alphabet. a's index : 0.
+	 * @return the next alphabet in the sequence.
+	 */
+	private String sequenceGenerator(int index) {
+        return index < 0 ? "" : sequenceGenerator((index / 26) - 1) + (char)(97 + index % 26);
     }
 	
+	/**
+	 * Standardizes the variables of the fact.
+	 * @param fact the string representation of the fact.
+	 * @return the fact with standardized variables.
+	 */
 	private String standardizeVariables(String fact) {
 		if(fact != null) {
 
@@ -404,7 +514,12 @@ class KnowledgeBase {
 
 		return fact;
 	}
-
+	
+	/**
+	 * Returns true if the <CODE>input</CODE> is a constant.<BR><B>For eg.</B> Bob.
+	 * @param arg the argument of the predicate to be verified
+	 * @return true if and only if the <CODE>input</CODE> is a constant.
+	 */
 	private boolean isConstant(String arg) {
 		boolean retVal = false;
 		if(arg != null) {
@@ -414,7 +529,12 @@ class KnowledgeBase {
 		}
 		return retVal;
 	}
-
+	
+	/**
+	 * Return a list of arguments extracted from the <CODE>strArgs</CODE>. 
+	 * @param strArgs the arguments in comma separated string form.
+	 * @return list of arguments.
+	 */
 	public List<String> getArguments(String strArgs) {
 		List<String> args = new ArrayList<>();
 		if(strArgs != null) {
@@ -427,7 +547,12 @@ class KnowledgeBase {
 		}
 		return args;
 	}
-
+	
+	/**
+	 * Returns true if the predicate is preceded by a negation operator.
+	 * @param predicate the predicate to be verified.
+	 * @return true if and only if the predicate is preceded by a negation operator.
+	 */
 	public boolean isNegativePredicate(String predicate) {
 		boolean retVal = false;
 		if(predicate != null) {
@@ -437,7 +562,12 @@ class KnowledgeBase {
 		}
 		return retVal;
 	}
-
+	
+	/**
+	 * Returns true if the knowledge base contains the predicate <CODE>predicate</CODE>.
+	 * @param predicate the predicate to be found.
+	 * @return true if and only if the knowledge base contains the predicate.
+	 */
 	public boolean predicateExists(String predicate) {
 		boolean exists = false;
 		if(predicate != null) {
@@ -445,7 +575,12 @@ class KnowledgeBase {
 		}
 		return exists;
 	}
-
+	
+	/**
+	 * Returns the map of all the facts/sentences containing the predicate <CODE>predicate</CODE>.
+	 * @param predicate the sentences containing this predicate are returned.
+	 * @return the map of all the facts/sentences containing the predicate <CODE>predicate</CODE>.
+	 */
 	public Map<String, List<List<String>>> getPredicateSentenceMap(String predicate) {
 		Map<String, List<List<String>>> sentenceMap = null;
 		if(predicate != null) {
@@ -454,6 +589,11 @@ class KnowledgeBase {
 		return sentenceMap;
 	}
 	
+	/**
+	 * Returns the type of argument from Constant or Variable.
+	 * @param argument the argument whose type is to be found. 
+	 * @return the type of argument from Constant or Variable.
+	 */
 	public String getArgumentType(String argument) {
 		String type = ARG_TYPE_CONSTANT;
 		if(argument != null) {
@@ -467,22 +607,33 @@ class KnowledgeBase {
 		}
 		return type;
 	}
-
-	public boolean remove(String query) {
+	
+	/**
+	 * Removes the fact from the knowledge base.
+	 * @param fact the fact to be removed.
+	 * @return true if and only if the fact is successfully removed.
+	 */
+	public boolean remove(String fact) {
 		boolean retVal = false;
-		if(query != null) {
-			String predicateName = getPredicateName(query);
-			if(isNegativePredicate(query)) {
-				removeFact(predicateName, NEGATIVE_SENTENCE_KEY, query);	
+		if(fact != null) {
+			String predicateName = getPredicateName(fact);
+			if(isNegativePredicate(fact)) {
+				removeFact(predicateName, NEGATIVE_SENTENCE_KEY, fact);	
 			}
 			else {
-				removeFact(predicateName, POSITIVE_SENTENCE_KEY, query);
+				removeFact(predicateName, POSITIVE_SENTENCE_KEY, fact);
 			}
 			retVal = true;
 		}
 		return retVal;		
 	}
-
+	
+	/**
+	 * Removes the fact from the knowledge base.
+	 * @param predicate the predicate against which the fact is stored in the knowledge base.
+	 * @param sentenceKey the key of the predicate against which the fact is stored.
+	 * @param fact the fact to be removed.
+	 */
 	private void removeFact(String predicate, String sentenceKey, String fact) {
 		if((predicate != null) && (sentenceKey != null) && (fact != null) ) {
 			if(KB.containsKey(predicate)) {
@@ -502,6 +653,11 @@ class KnowledgeBase {
 	}
 }
 
+/**
+ * Class for converting FOL sentences to CNF form.
+ * @author pachpandenikhil
+ *
+ */
 class CNFConverter {
 
 	private ExpressionTree tree;
@@ -513,7 +669,11 @@ class CNFConverter {
 		converter = new InfixToPostfix();
 	}
 
-
+	/**
+	 * Replaces parenthesis from '()' to '[]'.
+	 * @param inputExpr the FOL sentence.
+	 * @return the FOL sentence with replaced parenthesis.
+	 */
 	private static String replacePredicateParanthesis(String inputExpr) {
 		StringBuilder input = new StringBuilder(inputExpr);
 		if(input != null) {
@@ -536,7 +696,17 @@ class CNFConverter {
 		}
 		return input.toString();
 	}
-
+	
+	/**
+	 * Performs the following:<BR>
+	 * <UL>
+	 * <LI>Removes whitespaces.</LI>
+	 * <LI>Replaces implication operator.</LI>
+	 * <LI>Replaces predicate parenthesis.</LI>
+	 * </UL>
+	 * @param input the FOL sentence.
+	 * @return the updated FOL sentence.
+	 */
 	public String preProcessInput(String input) {
 
 		//trimming all the whitespace
@@ -551,7 +721,12 @@ class CNFConverter {
 		return input;
 
 	}
-
+	
+	/**
+	 * Converts the FOL sentence to CNF.
+	 * @param fact the FOL sentence
+	 * @return the sentence in CNF form.
+	 */
 	public String convertToCNF(String fact) {
 		String CNFExpression = "";
 		if(fact != null) {
@@ -567,7 +742,11 @@ class CNFConverter {
 		}
 		return CNFExpression;
 	}
-
+	
+	/**
+	 * Distributes AND operator over OR operator.
+	 * @param node the root of the expression tree.
+	 */
 	private void distributeAndOverOr(Node node) {
 		if(node != null) {
 			if(node.isOrOperator()) {
@@ -602,7 +781,11 @@ class CNFConverter {
 		}
 
 	}
-
+	
+	/**
+	 * Performs double distribution of AND operator over OR operators.
+	 * @param node
+	 */
 	private void performDoubleDistribution(Node node) {
 		if(node != null) {
 			Node leftNode = node.left;
@@ -629,7 +812,11 @@ class CNFConverter {
 		}
 
 	}
-
+	
+	/**
+	 * Moves negation inwards the expression.
+	 * @param node the root node of the expression tree.
+	 */
 	private void moveNegationInwards(Node node) {
 		if(node != null) {
 			moveNegationInwards(node.left);
@@ -649,6 +836,11 @@ class CNFConverter {
 		}
 	}
 	
+	/**
+	 * Handles special scenario where the root node is a negation operator.
+	 * @param root the root node of the expression tree.
+	 * @return the root node of the negated subtree.
+	 */
 	private Node handleRootNodeNegation(Node root) {
 		Node updatedRoot = root;
 		if(root != null) {
@@ -660,8 +852,10 @@ class CNFConverter {
 		return updatedRoot;
 	}
 
-
-
+	/**
+	 * Negates the operator and predicate nodes of the expression tree rooted at <CODE>node</CODE>.
+	 * @param node the root node of the expression tree.
+	 */
 	private void negateTree(Node node) {
 		if(node != null) {
 
@@ -691,8 +885,10 @@ class CNFConverter {
 		}
 	}
 
-
-
+	/**
+	 * Replaces implication operators in the expression tree with the corresponding logic sentence.
+	 * @param node the root node of the expression tree.
+	 */
 	private void replaceImplications(Node node) {
 		if(node != null) {
 			replaceImplications(node.left);
@@ -705,10 +901,13 @@ class CNFConverter {
 			}
 		}
 	}
-
-
 }
 
+/**
+ * Class representing the inference engine/agent.
+ * @author pachpandenikhil
+ *
+ */
 class Agent {
 	private CNFConverter cnfConverter;
 	private KnowledgeBase KB;
@@ -717,7 +916,12 @@ class Agent {
 		KB = new KnowledgeBase();
 		cnfConverter = new CNFConverter();
 	}
-
+	
+	/**
+	 * Adds the FOL fact/sentence to the knowledge base.
+	 * @param fact the FOL fact.
+	 * @return true if and only if the fact was successfully added. 
+	 */
 	public boolean tell(String fact) {
 		boolean retVal = false;
 		if(fact != null) {
@@ -726,7 +930,12 @@ class Agent {
 		}
 		return retVal;
 	}
-
+	
+	/**
+	 * Returns true if the query is entailed by the knowledge base.
+	 * @param query the query to be verified.
+	 * @return true if and only if the query is entailed by the knowledge base.
+	 */
 	public boolean ask(String query) {
 		boolean retVal = false;
 		if(query != null) {
@@ -749,6 +958,11 @@ class Agent {
 		return retVal;
 	}
 	
+	/**
+	 * Returns the negation of the query.
+	 * @param query the query to be negated.
+	 * @return the negation of the query.
+	 */
 	private String negateQuery(String query) {
 		String negatedQuery = "";
 		if(query != null) {
@@ -801,13 +1015,25 @@ class Agent {
 		return isContradiction;
 	}
 	
+	/**
+	 * Prints step by step resolution onto the console.
+	 * @param query
+	 * @param unifier
+	 * @param unification
+	 */
 	private void debugPrint(List<String> query, List<String> unifier, List<String> unification) {
 		System.out.println(getQuery(query) + "\t\t" + getQuery(unifier) + "\n");
 		System.out.println(getQuery(unification) + "\n");
 		System.out.println("-----------------------------------------------------------------------------------------------------\n\n");
 		
 	}
-
+	
+	/**
+	 * Returns true if the query <CODE>query</CODE> has already been visited during the process of resolution.
+	 * @param query the list representing the query to be verified.
+	 * @param visitedQueries the list of queries visited so far.
+	 * @return true if and only if the query has already been visited during the process of resolution.
+	 */
 	private boolean isQueryVisited(List<String> query, List<String> visitedQueries) {
 		boolean isVisited = false;
 		if( (query != null) && (visitedQueries != null) ) {
@@ -820,7 +1046,12 @@ class Agent {
 		}
 		return isVisited;
 	}
-
+	
+	/**
+	 * Returns the string representation of the query in the list form.
+	 * @param lQuery the list containing query predicates.
+	 * @return the string representation of the query in the list form.
+	 */
 	public static String getQuery(List<String> lQuery) {
 		String query = "";
 		if(lQuery != null) {
@@ -838,7 +1069,13 @@ class Agent {
 		}
 		return query;
 	}
-
+	
+	/**
+	 * Performs unification of two sentences.
+	 * @param lQuery the query on which the unification is to be performed.
+	 * @param lUnifier the fact with which the unification is performed.
+	 * @return the unified sentence.
+	 */
 	private List<String> unify(List<String> lQuery, List<String> lUnifier) {
 		List<String> unification = null;
 		if( (lQuery != null) && (lUnifier != null) ) {
@@ -874,7 +1111,13 @@ class Agent {
 		}
 		return unification;
 	}
-
+	
+	/**
+	 * Substitutes the variables in the query/fact with the substitution map. 
+	 * @param query the query/fact for substitution.
+	 * @param substitution the map containing the substitution parameters.
+	 * @return the query after substitution.
+	 */
 	private List<String> substitute(List<String> query, Map<String, String> substitution) {
 		List<String> updatedQuery = new ArrayList<>();
 		
@@ -925,7 +1168,12 @@ class Agent {
 		return updatedQuery;
 	}
 
-	
+	/**
+	 * Determines if the sentence <CODE>lQuery</CODE> can be unified with the sentence <CODE>lUnifier</CODE>.
+	 * @param lQuery the sentence for unification.
+	 * @param lUnifier the sentence to be unified with.
+	 * @return true if and only if the sentence <CODE>lQuery</CODE> can be unified with the sentence <CODE>lUnifier</CODE>.
+	 */
 	private boolean canUnify(List<String> lQuery, List<String> lUnifier) {
 		boolean canUnify = false;
 		if( (lQuery != null) && (lUnifier != null) ) {
@@ -949,7 +1197,13 @@ class Agent {
 		}
 		return canUnify;
 	}
-
+	
+	/**
+	 * Returns true if the argument types of the query are compatible with the unifier.
+	 * @param query the sentence for unification.
+	 * @param unifier the sentence to be unified with.
+	 * @return true if and only if the argument types of the query are compatible with the unifier.
+	 */
 	private boolean isArgumentsCompatible(String query, String unifier) {
 		boolean isCompatible = false;
 		if( (query != null) && (unifier != null) ) {
@@ -980,7 +1234,14 @@ class Agent {
 		}
 		return isCompatible;
 	}
-
+	
+	/**
+	 * Returns true if the query arguments can be substituted with unifier arguments.  
+	 * 
+	 * @param queryArgs the list of query arguments.
+	 * @param unifierArgs the list of unifier arguments.
+	 * @return true if and only if the query arguments can be substituted with unifier arguments.
+	 */
 	private boolean canSubstitute(List<String> queryArgs, List<String> unifierArgs) {
 		boolean canSubstitute = true;
 		if( (queryArgs != null) && (unifierArgs != null) ) {
@@ -992,7 +1253,12 @@ class Agent {
 		return canSubstitute;
 	}
 	
-	
+	/**
+	 * Returns the substitution map for query arguments with unifier arguments. 
+	 * @param queryArgs the list of query arguments.
+	 * @param unifierArgs the list of unifier arguments.
+	 * @return the substitution map for query arguments with unifier arguments.
+	 */
 	private Map<String, String> getSubstitution(List<String> queryArgs, List<String> unifierArgs) {
 		Map<String, String> substitution = null;
 		if( (queryArgs != null) && (unifierArgs != null) ) { 
@@ -1007,7 +1273,6 @@ class Agent {
 					else {
 						substitution.put(queryArg, unifierArg);
 					}
-					
 				}
 				else {
 					//checking if the previously added substitution is the same as the new value
@@ -1017,13 +1282,18 @@ class Agent {
 						break;
 					}
 				}
-				
 			}
 		}
 		
 		return substitution;
 	}
-
+	
+	/**
+	 * Determines if the query argument types are compatible with unifier argument types.
+	 * @param queryArgs the list of query arguments.
+	 * @param unifierArgs the list of unifier arguments.
+	 * @return true if and only if the query argument types are compatible with unifier argument types. 
+	 */
 	private boolean isArgumentTypesCompatible(List<String> queryArgs, List<String> unifierArgs) {
 		boolean isCompatible = false;
 		if( (queryArgs != null) && (unifierArgs != null) ) {
@@ -1046,7 +1316,12 @@ class Agent {
 		}
 		return isCompatible;
 	}
-
+	
+	/**
+	 * Returns the list of possible unifiers for the query.
+	 * @param query the query to be unified.
+	 * @return the list of possible unifiers.
+	 */
 	private List<List<String>> getUnifiers(String query) {
 		List<List<String>> unifiers = new ArrayList<>();
 		if(query != null) {
@@ -1065,7 +1340,12 @@ class Agent {
 		}
 		return unifiers;
 	}
-
+	
+	/**
+	 * Returns true if the knowledge base contains a sentence with the negation of the query. 
+	 * @param query the query whose negation is to be found.
+	 * @return true if and only if the knowledge base contains a sentence with the negation of the query.
+	 */
 	private boolean negationExists(String query) {
 		boolean negationExists = false;
 		if(query != null) {
@@ -1077,6 +1357,13 @@ class Agent {
 		return negationExists;
 	}
 }
+
+/**
+ * Class containing the execution logic.
+ * 
+ * @author pachpandenikhil
+ *
+ */
 public class homework {
 
 	private List<String> inputFacts;
@@ -1089,7 +1376,10 @@ public class homework {
 		agent = new Agent();
 	}
 
-
+	/**
+	 * Reads the input parameters as per the guidelines.
+	 * @param inputFile the complete path of the input file.
+	 */
 	private void readInputParameters(String inputFile) {
 		if(inputFile != null) {
 			BufferedReader br = null;
@@ -1134,7 +1424,9 @@ public class homework {
 
 	}
 
-
+	/**
+	 * Tells the facts/sentences to the inference engine.
+	 */
 	private void tellFacts() {
 		if(inputFacts != null) {
 			for(String fact : inputFacts) {
@@ -1142,8 +1434,12 @@ public class homework {
 			}
 		}
 	}
-
-	private List<String> getOutput() {
+	
+	/**
+	 * Performs the inference for all the queries and generates the results.
+	 * @return the list of results.
+	 */
+	private List<String> execute() {
 		List<String> outputLines = null;
 		if( (queries != null) && (queries.size() > 0) ) {
 			outputLines = new ArrayList<>();
@@ -1157,6 +1453,11 @@ public class homework {
 		return outputLines;
 	}
 	
+	/**
+	 * Writes the result to the output file.
+	 * @param outputLines the list of results.
+	 * @param outputFilePath the output file path.
+	 */
 	private static void writeToFile(List<String> outputLines, String outputFilePath) {
 		if((outputLines != null) && (outputFilePath != null)) {
 			File f = null;
@@ -1197,6 +1498,10 @@ public class homework {
 		}
 	}
 	
+	/**
+	 * Performs execution.
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		// Variables for parsing
@@ -1208,7 +1513,7 @@ public class homework {
 			homework hw = new homework(); 
 			hw.readInputParameters(decodedClassPath + inputFile);
 			hw.tellFacts();
-			List<String> outputLines = hw.getOutput();
+			List<String> outputLines = hw.execute();
 			writeToFile(outputLines, decodedClassPath + outputFile);
 		} catch (UnsupportedEncodingException e) {
 			System.err.println("Exception occured : " + e.getMessage());
