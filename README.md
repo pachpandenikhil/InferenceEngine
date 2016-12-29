@@ -1,6 +1,7 @@
 # InferenceEngine
 AI Inference Engine
 <br/>
+<br/>
 •	Determines the entailment of logic sentences by a knowledge base using the resolution inference algorithm.<br/>
 •	Accepts universally quantified first-order logic sentences as the knowledge base.<br/>
 •	Implemented table-based indexing for storing the knowledge base.<br/>
